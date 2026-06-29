@@ -9,7 +9,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(
+        name = "Metas",
+        description = "Gestión de evidencias y aprobación de metas."
+)
 @RestController
 @RequestMapping("/api/metas")
 @RequiredArgsConstructor
@@ -18,6 +25,15 @@ public class MetaController {
     private final RegistrarEvidenciaInputPort registrarEvidencia;
     private final AprobarMetaInputPort aprobarMeta;
 
+    @Operation(summary = "Registrar evidencia de una meta")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Evidencia registrada correctamente"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "Meta no encontrada")
+    })
     @PutMapping("/{id}/evidencia")
     public ResponseEntity<ApiResponse<Void>> registrarEvidencia(
             @PathVariable Integer id,
@@ -33,6 +49,15 @@ public class MetaController {
         );
     }
 
+    @Operation(summary = "Aprobar una meta")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Meta aprobada correctamente"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "Meta no encontrada")
+    })
     @PostMapping("/{id}/aprobar")
     public ResponseEntity<ApiResponse<AprobarMetaResponse>> aprobarMeta(
             @PathVariable Integer id) {

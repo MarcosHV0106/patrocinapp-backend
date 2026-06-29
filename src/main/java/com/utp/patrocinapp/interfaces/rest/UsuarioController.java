@@ -11,7 +11,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+@Tag(
+        name = "Usuarios",
+        description = "Registro de deportistas y negocios"
+)
 @RestController
 @RequestMapping("/api/usuarios")
 @RequiredArgsConstructor
@@ -21,6 +28,15 @@ public class UsuarioController {
 
     private final RegistrarDeportistaInputPort registrarDeportista;
 
+    @Operation(summary = "Registrar un nuevo negocio")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "201",
+                    description = "Negocio registrado correctamente"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Datos inválidos")
+    })
     @PostMapping("/negocios")
     public ResponseEntity<ApiResponse<RegistrarUsuarioResponse>> registrarNegocio(
             @Valid @RequestBody RegistrarNegocioRequest request) {
@@ -38,6 +54,15 @@ public class UsuarioController {
 
     }
 
+    @Operation(summary = "Registrar un nuevo deportista")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "201",
+                    description = "Deportista registrado correctamente"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Datos inválidos")
+    })
     @PostMapping("/deportistas")
     public ResponseEntity<ApiResponse<RegistrarUsuarioResponse>> registrarDeportista(
             @Valid @RequestBody RegistrarDeportistaRequest request) {
