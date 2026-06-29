@@ -39,8 +39,7 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
     @Override
     public Optional<Usuario> buscarPorCorreo(String correo) {
 
-        return repository
-                .findByCorreo(correo)
+        return repository.findByCorreo(correo)
                 .map(UsuarioMapper::toDomain);
 
     }

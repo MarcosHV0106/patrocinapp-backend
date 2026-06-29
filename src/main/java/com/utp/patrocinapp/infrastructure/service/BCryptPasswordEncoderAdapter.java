@@ -10,9 +10,14 @@ public class BCryptPasswordEncoderAdapter implements PasswordEncoderPort {
     public String encode(String rawPassword) {
 
         // Temporal.
-        // Más adelante cambiaremos por BCrypt.
-
         return rawPassword;
+
+    }
+
+    @Override
+    public boolean matches(String rawPassword, String encodedPassword) {
+
+        return rawPassword.equals(encodedPassword);
 
     }
 
