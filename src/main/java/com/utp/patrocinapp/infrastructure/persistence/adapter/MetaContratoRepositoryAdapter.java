@@ -1,0 +1,27 @@
+package com.utp.patrocinapp.infrastructure.persistence.adapter;
+
+import com.utp.patrocinapp.domain.model.MetaContrato;
+import com.utp.patrocinapp.domain.ports.output.MetaContratoRepositoryPort;
+import com.utp.patrocinapp.infrastructure.persistence.mapper.MetaContratoMapper;
+import com.utp.patrocinapp.infrastructure.persistence.repository.MetaContratoJpaRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@RequiredArgsConstructor
+public class MetaContratoRepositoryAdapter implements MetaContratoRepositoryPort {
+
+    private final MetaContratoJpaRepository repository;
+
+    @Override
+    public MetaContrato guardar(MetaContrato metaContrato) {
+
+        return MetaContratoMapper.toDomain(
+                repository.save(
+                        MetaContratoMapper.toEntity(metaContrato)
+                )
+        );
+
+    }
+
+}
