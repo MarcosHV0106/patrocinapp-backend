@@ -7,6 +7,8 @@ import com.utp.patrocinapp.infrastructure.persistence.repository.MetaContratoJpa
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class MetaContratoRepositoryAdapter implements MetaContratoRepositoryPort {
@@ -21,6 +23,14 @@ public class MetaContratoRepositoryAdapter implements MetaContratoRepositoryPort
                         MetaContratoMapper.toEntity(metaContrato)
                 )
         );
+
+    }
+
+    @Override
+    public Optional<MetaContrato> buscarPorId(Integer id) {
+
+        return repository.findById(id)
+                .map(MetaContratoMapper::toDomain);
 
     }
 

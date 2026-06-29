@@ -7,6 +7,8 @@ import com.utp.patrocinapp.infrastructure.persistence.repository.FondoGarantiaJp
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class FondoGarantiaRepositoryAdapter implements FondoGarantiaRepositoryPort {
@@ -21,6 +23,14 @@ public class FondoGarantiaRepositoryAdapter implements FondoGarantiaRepositoryPo
                         FondoGarantiaMapper.toEntity(fondoGarantia)
                 )
         );
+
+    }
+
+    @Override
+    public Optional<FondoGarantia> buscarPorContrato(Integer idContrato) {
+
+        return repository.findById(idContrato)
+                .map(FondoGarantiaMapper::toDomain);
 
     }
 
