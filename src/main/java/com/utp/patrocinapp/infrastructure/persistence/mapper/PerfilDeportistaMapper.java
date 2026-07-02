@@ -16,9 +16,11 @@ public class PerfilDeportistaMapper {
 
         return new PerfilDeportista(
                 entity.getIdUsuario(),
-                null, // El Usuario se recuperará cuando un caso de uso realmente lo necesite
+                null,
+                entity.getNombreCompleto(),
                 entity.getDni(),
-                entity.getDisciplina()
+                entity.getDisciplina(),
+                entity.getBiografia()
         );
 
     }
@@ -31,8 +33,10 @@ public class PerfilDeportistaMapper {
 
         return PerfilDeportistaEntity.builder()
                 .idUsuario(domain.getIdUsuario())
+                .nombreCompleto(domain.getNombreCompleto())
                 .dni(domain.getDni())
                 .disciplina(domain.getDisciplina())
+                .biografia(domain.getBiografia())
                 .build();
 
     }

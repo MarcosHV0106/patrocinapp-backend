@@ -7,6 +7,7 @@ import com.utp.patrocinapp.infrastructure.persistence.repository.MetaContratoJpa
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -31,6 +32,16 @@ public class MetaContratoRepositoryAdapter implements MetaContratoRepositoryPort
 
         return repository.findById(id)
                 .map(MetaContratoMapper::toDomain);
+
+    }
+
+    @Override
+    public List<MetaContrato> listarPorContrato(Integer idContrato) {
+
+        return repository.findByIdContratoOrderByIdMetaContratoAsc(idContrato)
+                .stream()
+                .map(MetaContratoMapper::toDomain)
+                .toList();
 
     }
 

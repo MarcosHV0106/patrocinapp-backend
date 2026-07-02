@@ -7,6 +7,7 @@ import com.utp.patrocinapp.infrastructure.persistence.repository.PerfilDeportist
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -31,6 +32,16 @@ public class PerfilDeportistaRepositoryAdapter implements PerfilDeportistaReposi
 
         return repository.findById(idUsuario)
                 .map(PerfilDeportistaMapper::toDomain);
+
+    }
+
+    @Override
+    public List<PerfilDeportista> listarTodos() {
+
+        return repository.findAll()
+                .stream()
+                .map(PerfilDeportistaMapper::toDomain)
+                .toList();
 
     }
 

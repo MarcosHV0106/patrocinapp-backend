@@ -1,7 +1,6 @@
 package com.utp.patrocinapp.application.usecase.usuario;
 
 import com.utp.patrocinapp.application.dto.usuario.RegistrarDeportistaRequest;
-import com.utp.patrocinapp.application.dto.usuario.RegistrarUsuarioRequest;
 import com.utp.patrocinapp.application.dto.usuario.RegistrarUsuarioResponse;
 import com.utp.patrocinapp.domain.enums.Rol;
 import com.utp.patrocinapp.domain.model.PerfilDeportista;
@@ -41,8 +40,10 @@ public class RegistrarDeportistaUseCase implements RegistrarDeportistaInputPort 
 
         PerfilDeportista perfil = PerfilDeportista.crear(
                 usuarioGuardado,
+                request.getNombreCompleto(),
                 request.getDni(),
-                request.getDisciplina()
+                request.getDisciplina(),
+                request.getBiografia()
         );
 
         perfilDeportistaRepository.guardar(perfil);
