@@ -69,7 +69,7 @@ public class MetaContrato {
         meta.setComentarioDeportista(comentarioDeportista);
         meta.setEstado(EstadoMeta.PENDIENTE);
         meta.setFechaActualizacion(LocalDateTime.now());
-        meta.setVersion(0L);
+        meta.setVersion(null);
 
         return meta;
     }

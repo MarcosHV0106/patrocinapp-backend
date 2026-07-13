@@ -41,7 +41,7 @@ public class FondoGarantia {
         fondo.setMontoCongelado(monto);
         fondo.setMontoLiberado(BigDecimal.ZERO);
         fondo.setUltimaActualizacion(LocalDateTime.now());
-        fondo.setVersion(0L);
+        fondo.setVersion(null);
 
         return fondo;
     }
