@@ -36,6 +36,11 @@ public class ContratoRepositoryAdapter implements ContratoRepositoryPort {
     }
 
     @Override
+    public Optional<Contrato> buscarPorIdParaActualizar(Integer idContrato) {
+        return repository.findByIdForUpdate(idContrato).map(ContratoMapper::toDomain);
+    }
+
+    @Override
     public List<Contrato> buscarPorNegocio(Integer idNegocio) {
 
         return repository.findByIdNegocioOrderByFechaCreacionDesc(idNegocio)

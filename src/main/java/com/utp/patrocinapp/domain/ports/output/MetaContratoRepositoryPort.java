@@ -11,6 +11,10 @@ public interface MetaContratoRepositoryPort {
 
     Optional<MetaContrato> buscarPorId(Integer id);
 
+    Optional<MetaContrato> buscarPorIdParaActualizar(Integer id);
+
     List<MetaContrato> listarPorContrato(Integer idContrato);
+
+    long contarNoPagadasPorContrato(Integer idContrato);
 
 }

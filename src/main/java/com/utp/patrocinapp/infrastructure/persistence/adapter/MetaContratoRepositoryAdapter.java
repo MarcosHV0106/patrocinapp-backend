@@ -36,6 +36,11 @@ public class MetaContratoRepositoryAdapter implements MetaContratoRepositoryPort
     }
 
     @Override
+    public Optional<MetaContrato> buscarPorIdParaActualizar(Integer id) {
+        return repository.findByIdForUpdate(id).map(MetaContratoMapper::toDomain);
+    }
+
+    @Override
     public List<MetaContrato> listarPorContrato(Integer idContrato) {
 
         return repository.findByIdContratoOrderByIdMetaContratoAsc(idContrato)
@@ -43,6 +48,11 @@ public class MetaContratoRepositoryAdapter implements MetaContratoRepositoryPort
                 .map(MetaContratoMapper::toDomain)
                 .toList();
 
+    }
+
+    @Override
+    public long contarNoPagadasPorContrato(Integer idContrato) {
+        return repository.countByIdContratoAndEstadoNot(idContrato, com.utp.patrocinapp.domain.enums.EstadoMeta.PAGADA);
     }
 
 }

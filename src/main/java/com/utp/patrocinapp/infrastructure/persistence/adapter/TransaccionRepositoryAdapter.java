@@ -25,4 +25,15 @@ public class TransaccionRepositoryAdapter
 
     }
 
+    @Override
+    public boolean existePorMeta(Integer idMetaContrato) {
+        return repository.existsByIdMetaContrato(idMetaContrato);
+    }
+
+    @Override
+    public java.util.List<Transaccion> listarPorContrato(Integer idContrato) {
+        return repository.findByIdContratoOrderByFechaEjecucionDesc(idContrato).stream()
+                .map(TransaccionMapper::toDomain).toList();
+    }
+
 }
