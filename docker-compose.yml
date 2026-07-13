@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: patrocinapp
+      POSTGRES_USER: patrocinapp
+      POSTGRES_PASSWORD: patrocinapp-local
+    ports:
+      - "5432:5432"
+    volumes:
+      - patrocinapp_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U patrocinapp -d patrocinapp"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: local,demo
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/patrocinapp
+      SPRING_DATASOURCE_USERNAME: patrocinapp
+      SPRING_DATASOURCE_PASSWORD: patrocinapp-local
+      JWT_SECRET: patrocinapp-local-secret-only-32-bytes-minimum
+      CORS_ALLOWED_ORIGINS: http://localhost:4200
+    ports:
+      - "8080:8080"
+
+volumes:
+  patrocinapp_postgres:
