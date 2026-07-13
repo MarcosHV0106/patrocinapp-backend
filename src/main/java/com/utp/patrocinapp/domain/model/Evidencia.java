@@ -53,7 +53,7 @@ public class Evidencia {
         LocalDateTime ahora = LocalDateTime.now();
         return new Evidencia(null, idMetaContrato, numeroIntento, nombreOriginal, tipoMime,
                 tamanioBytes, hashSha256, comentarioDeportista, EstadoEvidencia.EN_REVISION,
-                null, ahora, null, null, ahora, 0L);
+                null, ahora, null, null, ahora, null);
     }
 
     public void rechazar(String motivo, Integer idRevisor) {

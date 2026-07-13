@@ -48,7 +48,7 @@ public class Contrato {
         contrato.setMontoTotal(montoTotal);
         contrato.setEstado(EstadoContrato.ACTIVO);
         contrato.setFechaCreacion(LocalDateTime.now());
-        contrato.setVersion(0L);
+        contrato.setVersion(null);
 
         return contrato;
     }
