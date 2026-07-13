@@ -34,15 +34,15 @@ ON CONFLICT (id_contrato) DO NOTHING;
 INSERT INTO evidencias (id_evidencia, id_meta_contrato, numero_intento, nombre_original, tipo_mime,
   tamanio_bytes, hash_sha256, comentario_deportista, estado, motivo_rechazo, fecha_carga,
   fecha_revision, id_usuario_revisor, fecha_actualizacion, version) VALUES
-  (9401, 9301, 1, 'meta-pagada.png', 'image/png', 9, repeat('1', 64), 'Entrega aprobada.', 'APROBADA', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 9001, CURRENT_TIMESTAMP, 0),
-  (9402, 9302, 1, 'meta-revision.png', 'image/png', 9, repeat('2', 64), 'Por favor revisar.', 'EN_REVISION', NULL, CURRENT_TIMESTAMP, NULL, NULL, CURRENT_TIMESTAMP, 0),
-  (9403, 9303, 1, 'meta-rechazada.png', 'image/png', 9, repeat('3', 64), 'Primera versión.', 'RECHAZADA', 'El logotipo no se distingue con claridad.', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 9001, CURRENT_TIMESTAMP, 0)
+  (9401, 9301, 1, 'meta-pagada.png', 'image/png', 68, '431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460', 'Entrega aprobada.', 'APROBADA', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 9001, CURRENT_TIMESTAMP, 0),
+  (9402, 9302, 1, 'meta-revision.png', 'image/png', 68, '431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460', 'Por favor revisar.', 'EN_REVISION', NULL, CURRENT_TIMESTAMP, NULL, NULL, CURRENT_TIMESTAMP, 0),
+  (9403, 9303, 1, 'meta-rechazada.png', 'image/png', 68, '431ced6916a2a21a156e38701afe55bbd7f88969fbbfc56d7fe099d47f265460', 'Primera versión.', 'RECHAZADA', 'El logotipo no se distingue con claridad.', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 9001, CURRENT_TIMESTAMP, 0)
 ON CONFLICT (id_evidencia) DO NOTHING;
 
 INSERT INTO archivos_evidencia (id_evidencia, contenido) VALUES
-  (9401, decode('89504e470d0a1a0a01', 'hex')),
-  (9402, decode('89504e470d0a1a0a02', 'hex')),
-  (9403, decode('89504e470d0a1a0a03', 'hex'))
+  (9401, decode('89504e470d0a1a0a0000000d4948445200000001000000010804000000b51c0c020000000b4944415478da6364f80f00010501012718e3660000000049454e44ae426082', 'hex')),
+  (9402, decode('89504e470d0a1a0a0000000d4948445200000001000000010804000000b51c0c020000000b4944415478da6364f80f00010501012718e3660000000049454e44ae426082', 'hex')),
+  (9403, decode('89504e470d0a1a0a0000000d4948445200000001000000010804000000b51c0c020000000b4944415478da6364f80f00010501012718e3660000000049454e44ae426082', 'hex'))
 ON CONFLICT (id_evidencia) DO NOTHING;
 
 INSERT INTO transacciones (id_transaccion, id_contrato, id_meta_contrato, monto_neto, comision_plataforma, fecha_ejecucion)
