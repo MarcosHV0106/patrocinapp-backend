@@ -19,6 +19,8 @@ public class ContratoDetalleResponse {
     private String nombreDeportista;
     private String disciplinaDeportista;
     private BigDecimal montoTotal;
+    private BigDecimal montoRetenido;
+    private BigDecimal montoLiberado;
     private EstadoContrato estado;
     private LocalDateTime fechaCreacion;
     private List<MetaContratoDetalleResponse> metas;

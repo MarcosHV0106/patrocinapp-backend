@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.util.List;
+import com.utp.patrocinapp.application.dto.evidencia.EvidenciaResponse;
 
 @Getter
 @Builder
@@ -18,5 +20,7 @@ public class MetaContratoDetalleResponse {
     private String comentarioDeportista;
     private String urlEvidencia;
     private EstadoMeta estado;
+    private EvidenciaResponse evidenciaActual;
+    private List<EvidenciaResponse> evidencias;
 
 }

@@ -7,16 +7,26 @@ import com.utp.patrocinapp.application.dto.contrato.MetaSeleccionadaRequest;
 import com.utp.patrocinapp.domain.model.Contrato;
 import com.utp.patrocinapp.domain.model.FondoGarantia;
 import com.utp.patrocinapp.domain.model.MetaContrato;
+import com.utp.patrocinapp.domain.model.Notificacion;
+import com.utp.patrocinapp.domain.model.AuditoriaAccion;
+import com.utp.patrocinapp.domain.model.UsuarioAutenticado;
+import com.utp.patrocinapp.domain.enums.Rol;
+import com.utp.patrocinapp.domain.enums.TipoNotificacion;
 import com.utp.patrocinapp.domain.ports.input.CrearContratoInputPort;
 import com.utp.patrocinapp.domain.ports.output.ContratoRepositoryPort;
 import com.utp.patrocinapp.domain.ports.output.FondoGarantiaRepositoryPort;
 import com.utp.patrocinapp.domain.ports.output.MetaContratoRepositoryPort;
 import com.utp.patrocinapp.domain.ports.output.PerfilDeportistaRepositoryPort;
 import com.utp.patrocinapp.domain.ports.output.PerfilNegocioRepositoryPort;
+import com.utp.patrocinapp.domain.ports.output.UsuarioAutenticadoPort;
+import com.utp.patrocinapp.domain.ports.output.NotificacionRepositoryPort;
+import com.utp.patrocinapp.domain.ports.output.AuditoriaRepositoryPort;
 import com.utp.patrocinapp.shared.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,18 +37,32 @@ import java.util.List;
 @Transactional
 public class CrearContratoUseCase implements CrearContratoInputPort {
 
-    private static final BigDecimal FACTOR_COMISION_NEGOCIO = new BigDecimal("1.10");
-
     private final ContratoRepositoryPort contratoRepository;
     private final FondoGarantiaRepositoryPort fondoGarantiaRepository;
     private final MetaContratoRepositoryPort metaContratoRepository;
     private final PerfilNegocioRepositoryPort perfilNegocioRepository;
     private final PerfilDeportistaRepositoryPort perfilDeportistaRepository;
+    private final UsuarioAutenticadoPort usuarioAutenticadoPort;
+    private final NotificacionRepositoryPort notificacionRepository;
+    private final AuditoriaRepositoryPort auditoriaRepository;
+
+    @Value("${patrocinapp.comision.porcentaje}")
+    private BigDecimal porcentajeComision;
 
     @Override
     public CrearContratoResponse ejecutar(CrearContratoRequest request) {
 
-        if (perfilNegocioRepository.buscarPorId(request.getIdNegocio()).isEmpty()) {
+        UsuarioAutenticado actor = usuarioAutenticadoPort.actual();
+        if (!actor.tieneRol(Rol.NEGOCIO)) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "ROL_INCORRECTO",
+                    "Solo un negocio puede crear contratos.");
+        }
+        if (request.getIdNegocio() != null && !actor.id().equals(request.getIdNegocio())) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "RECURSO_AJENO",
+                    "No puedes crear un contrato en nombre de otro negocio.");
+        }
+
+        if (perfilNegocioRepository.buscarPorId(actor.id()).isEmpty()) {
             throw new BusinessException("El negocio indicado no existe.");
         }
 
@@ -46,14 +70,15 @@ public class CrearContratoUseCase implements CrearContratoInputPort {
             throw new BusinessException("El deportista indicado no existe.");
         }
 
+        BigDecimal factorComision = BigDecimal.ONE.add(porcentajeComision.movePointLeft(2));
         BigDecimal montoTotalNegocio = request.getMetas()
                 .stream()
                 .map(MetaSeleccionadaRequest::getMontoDeportista)
-                .map(monto -> monto.multiply(FACTOR_COMISION_NEGOCIO))
+                .map(monto -> monto.multiply(factorComision))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         Contrato contrato = Contrato.crear(
-                request.getIdNegocio(),
+                actor.id(),
                 request.getIdDeportista(),
                 montoTotalNegocio
         );
@@ -71,7 +96,7 @@ public class CrearContratoUseCase implements CrearContratoInputPort {
 
         for (MetaSeleccionadaRequest item : request.getMetas()) {
             BigDecimal montoNegocio = item.getMontoDeportista()
-                    .multiply(FACTOR_COMISION_NEGOCIO);
+                    .multiply(factorComision);
 
             MetaContrato meta = MetaContrato.crear(
                     item.getIdPlantilla(),
@@ -95,6 +120,13 @@ public class CrearContratoUseCase implements CrearContratoInputPort {
                             .build()
             );
         }
+
+        notificacionRepository.guardar(Notificacion.crear(request.getIdDeportista(),
+                TipoNotificacion.CONTRATO_CREADO,
+                "Un negocio creó un nuevo contrato de patrocinio contigo.",
+                "CONTRATO", contrato.getIdContrato()));
+        auditoriaRepository.guardar(AuditoriaAccion.registrar(actor.id(), "CONTRATO_CREADO", "CONTRATO",
+                contrato.getIdContrato(), "EXITOSO", "Fondo de garantía interno creado."));
 
         return CrearContratoResponse.builder()
                 .idContrato(contrato.getIdContrato())
