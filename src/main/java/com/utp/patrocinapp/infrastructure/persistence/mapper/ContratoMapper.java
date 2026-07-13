@@ -20,7 +20,8 @@ public class ContratoMapper {
                 entity.getIdDeportista(),
                 entity.getMontoTotal(),
                 entity.getEstado(),
-                entity.getFechaCreacion()
+                entity.getFechaCreacion(),
+                entity.getVersion()
         );
 
     }
@@ -38,6 +39,7 @@ public class ContratoMapper {
                 .montoTotal(domain.getMontoTotal())
                 .estado(domain.getEstado())
                 .fechaCreacion(domain.getFechaCreacion())
+                .version(domain.getVersion())
                 .build();
 
     }

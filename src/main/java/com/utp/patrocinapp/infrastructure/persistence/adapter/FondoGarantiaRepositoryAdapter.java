@@ -34,4 +34,9 @@ public class FondoGarantiaRepositoryAdapter implements FondoGarantiaRepositoryPo
 
     }
 
+    @Override
+    public Optional<FondoGarantia> buscarPorContratoParaActualizar(Integer idContrato) {
+        return repository.findByIdForUpdate(idContrato).map(FondoGarantiaMapper::toDomain);
+    }
+
 }

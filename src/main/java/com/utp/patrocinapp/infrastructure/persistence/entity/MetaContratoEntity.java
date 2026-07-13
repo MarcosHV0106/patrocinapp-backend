@@ -49,4 +49,8 @@ public class MetaContratoEntity {
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
 
+    @Version
+    @Column(nullable = false)
+    private Long version;
+
 }

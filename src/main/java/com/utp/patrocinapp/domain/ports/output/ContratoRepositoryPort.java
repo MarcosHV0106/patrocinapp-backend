@@ -11,6 +11,8 @@ public interface ContratoRepositoryPort {
 
     Optional<Contrato> buscarPorId(Integer idContrato);
 
+    Optional<Contrato> buscarPorIdParaActualizar(Integer idContrato);
+
     List<Contrato> buscarPorNegocio(Integer idNegocio);
 
     List<Contrato> buscarPorDeportista(Integer idDeportista);

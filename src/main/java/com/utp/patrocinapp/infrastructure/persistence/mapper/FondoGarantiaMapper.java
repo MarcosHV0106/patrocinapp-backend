@@ -16,8 +16,11 @@ public class FondoGarantiaMapper {
 
         return new FondoGarantia(
                 entity.getIdContrato(),
+                entity.getMontoInicial(),
                 entity.getMontoCongelado(),
-                entity.getUltimaActualizacion()
+                entity.getMontoLiberado(),
+                entity.getUltimaActualizacion(),
+                entity.getVersion()
         );
 
     }
@@ -30,8 +33,11 @@ public class FondoGarantiaMapper {
 
         return FondoGarantiaEntity.builder()
                 .idContrato(domain.getIdContrato())
+                .montoInicial(domain.getMontoInicial())
                 .montoCongelado(domain.getMontoCongelado())
+                .montoLiberado(domain.getMontoLiberado())
                 .ultimaActualizacion(domain.getUltimaActualizacion())
+                .version(domain.getVersion())
                 .build();
 
     }
