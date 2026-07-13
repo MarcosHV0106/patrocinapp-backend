@@ -1,0 +1,93 @@
+{
+  "info": {
+    "name": "PatrocinApp - flujo de evidencias",
+    "description": "Ejecutar en orden. En las cargas selecciona manualmente un PNG, JPEG, WebP, PDF o MP4 de hasta 10 MB.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenNegocio}}", "type": "string" }] },
+  "item": [
+    {
+      "name": "01 Preparación",
+      "item": [
+        {
+          "name": "Registrar negocio",
+          "request": { "auth": { "type": "noauth" }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"correo\": \"{{correoNegocio}}\",\n  \"password\": \"{{password}}\",\n  \"ruc\": \"20888888881\",\n  \"razonSocial\": \"Marca Postman\"\n}" },
+            "url": "{{baseUrl}}/usuarios/negocios" },
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) pm.environment.set('idNegocio', pm.response.json().data.id);"] } }]
+        },
+        {
+          "name": "Registrar deportista",
+          "request": { "auth": { "type": "noauth" }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"correo\": \"{{correoDeportista}}\",\n  \"password\": \"{{password}}\",\n  \"nombreCompleto\": \"Atleta Postman\",\n  \"dni\": \"78888881\",\n  \"disciplina\": \"Atletismo\",\n  \"biografia\": \"Cuenta para ejecutar el flujo reproducible.\"\n}" },
+            "url": "{{baseUrl}}/usuarios/deportistas" },
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) pm.environment.set('idDeportista', pm.response.json().data.id);"] } }]
+        },
+        {
+          "name": "Login negocio",
+          "request": { "auth": { "type": "noauth" }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"correo\":\"{{correoNegocio}}\",\"password\":\"{{password}}\"}" }, "url": "{{baseUrl}}/auth/login" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('login negocio', () => pm.response.to.have.status(200));", "pm.environment.set('tokenNegocio', pm.response.json().data.token);"] } }]
+        },
+        {
+          "name": "Login deportista",
+          "request": { "auth": { "type": "noauth" }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"correo\":\"{{correoDeportista}}\",\"password\":\"{{password}}\"}" }, "url": "{{baseUrl}}/auth/login" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('login deportista', () => pm.response.to.have.status(200));", "pm.environment.set('tokenDeportista', pm.response.json().data.token);"] } }]
+        },
+        {
+          "name": "Crear contrato",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"idNegocio\": {{idNegocio}},\n  \"idDeportista\": {{idDeportista}},\n  \"metas\": [{\"idPlantilla\":1,\"descripcionAcordada\":\"Publicar fotografía con logotipo\",\"montoDeportista\":100.00}]\n}" },
+            "url": "{{baseUrl}}/contratos" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('contrato creado', () => pm.response.to.have.status(201));", "const data = pm.response.json().data; pm.environment.set('idContrato', data.idContrato); pm.environment.set('idMeta', data.metas[0].idMeta);"] } }]
+        }
+      ]
+    },
+    {
+      "name": "02 Rechazo y reenvío",
+      "item": [
+        {
+          "name": "Deportista carga evidencia",
+          "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenDeportista}}", "type": "string" }] },
+            "method": "POST", "body": { "mode": "formdata", "formdata": [
+              { "key": "archivo", "type": "file", "src": "" }, { "key": "comentario", "value": "Primer intento desde Postman", "type": "text" }
+            ] }, "url": "{{baseUrl}}/metas/{{idMeta}}/evidencias" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('archivo aceptado', () => pm.response.to.have.status(201));", "pm.environment.set('idEvidencia', pm.response.json().data.idEvidencia);"] } }]
+        },
+        {
+          "name": "Negocio rechaza con motivo",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"motivo\":\"El logotipo no se distingue con claridad\"}" },
+            "url": "{{baseUrl}}/evidencias/{{idEvidencia}}/rechazar" }
+        },
+        {
+          "name": "Deportista consulta motivo",
+          "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenDeportista}}", "type": "string" }] },
+            "method": "GET", "url": "{{baseUrl}}/metas/{{idMeta}}/evidencias" }
+        },
+        {
+          "name": "Deportista reenvía evidencia",
+          "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenDeportista}}", "type": "string" }] },
+            "method": "POST", "body": { "mode": "formdata", "formdata": [
+              { "key": "archivo", "type": "file", "src": "" }, { "key": "comentario", "value": "Versión corregida", "type": "text" }
+            ] }, "url": "{{baseUrl}}/metas/{{idMeta}}/evidencias" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('reenvío aceptado', () => pm.response.to.have.status(201));", "pm.environment.set('idEvidencia', pm.response.json().data.idEvidencia);"] } }]
+        }
+      ]
+    },
+    {
+      "name": "03 Aprobación, pago e historial",
+      "item": [
+        { "name": "Descargar evidencia protegida", "request": { "method": "GET", "url": "{{baseUrl}}/evidencias/{{idEvidencia}}/archivo" } },
+        { "name": "Aprobar y pagar", "request": { "method": "POST", "url": "{{baseUrl}}/evidencias/{{idEvidencia}}/aprobar" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('pago liberado', () => pm.response.to.have.status(200));", "pm.expect(pm.response.json().data.estadoMeta).to.eql('PAGADA');"] } }] },
+        { "name": "Doble aprobación devuelve conflicto", "request": { "method": "POST", "url": "{{baseUrl}}/evidencias/{{idEvidencia}}/aprobar" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('operación idempotente', () => pm.response.to.have.status(409));"] } }] },
+        { "name": "Historial de contrato", "request": { "method": "GET", "url": "{{baseUrl}}/contratos/{{idContrato}}/historial" } },
+        { "name": "Dashboard negocio", "request": { "method": "GET", "url": "{{baseUrl}}/dashboard/negocio/resumen" } },
+        { "name": "Notificaciones negocio", "request": { "method": "GET", "url": "{{baseUrl}}/notificaciones" } }
+      ]
+    }
+  ]
+}
