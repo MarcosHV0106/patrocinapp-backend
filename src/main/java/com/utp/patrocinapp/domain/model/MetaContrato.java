@@ -22,6 +22,7 @@ public class MetaContrato {
     private EstadoMeta estado;
 
     private LocalDateTime fechaActualizacion;
+    private Long version;
 
     public MetaContrato() {
     }
@@ -36,7 +37,8 @@ public class MetaContrato {
             String comentarioDeportista,
             String urlEvidencia,
             EstadoMeta estado,
-            LocalDateTime fechaActualizacion) {
+            LocalDateTime fechaActualizacion,
+            Long version) {
 
         this.idMetaContrato = idMetaContrato;
         this.idContrato = idContrato;
@@ -48,6 +50,7 @@ public class MetaContrato {
         this.urlEvidencia = urlEvidencia;
         this.estado = estado;
         this.fechaActualizacion = fechaActualizacion;
+        this.version = version;
     }
 
     public static MetaContrato crear(
@@ -66,6 +69,7 @@ public class MetaContrato {
         meta.setComentarioDeportista(comentarioDeportista);
         meta.setEstado(EstadoMeta.PENDIENTE);
         meta.setFechaActualizacion(LocalDateTime.now());
+        meta.setVersion(null);
 
         return meta;
     }
@@ -148,5 +152,45 @@ public class MetaContrato {
 
     public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
         this.fechaActualizacion = fechaActualizacion;
+    }
+
+    public Long getVersion() { return version; }
+    public void setVersion(Long version) { this.version = version; }
+
+    public boolean puedeRecibirEvidencia() {
+        return estado == EstadoMeta.PENDIENTE || estado == EstadoMeta.RECHAZADA;
+    }
+
+    public void marcarEnRevision(String comentario) {
+        if (!puedeRecibirEvidencia()) {
+            throw new IllegalStateException("La meta no admite una nueva evidencia en su estado actual.");
+        }
+        this.comentarioDeportista = comentario;
+        this.estado = EstadoMeta.EN_REVISION;
+        this.fechaActualizacion = LocalDateTime.now();
+    }
+
+    public void marcarRechazada() {
+        if (estado != EstadoMeta.EN_REVISION) {
+            throw new IllegalStateException("Solo una meta en revisión puede rechazarse.");
+        }
+        this.estado = EstadoMeta.RECHAZADA;
+        this.fechaActualizacion = LocalDateTime.now();
+    }
+
+    public void marcarAprobada() {
+        if (estado != EstadoMeta.EN_REVISION) {
+            throw new IllegalStateException("Solo una meta en revisión puede aprobarse.");
+        }
+        this.estado = EstadoMeta.APROBADA;
+        this.fechaActualizacion = LocalDateTime.now();
+    }
+
+    public void marcarPagada() {
+        if (estado != EstadoMeta.APROBADA) {
+            throw new IllegalStateException("Solo una meta aprobada puede pagarse.");
+        }
+        this.estado = EstadoMeta.PAGADA;
+        this.fechaActualizacion = LocalDateTime.now();
     }
 }

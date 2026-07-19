@@ -10,4 +10,6 @@ public interface FondoGarantiaRepositoryPort {
 
     Optional<FondoGarantia> buscarPorContrato(Integer idContrato);
 
+    Optional<FondoGarantia> buscarPorContratoParaActualizar(Integer idContrato);
+
 }

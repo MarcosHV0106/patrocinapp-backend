@@ -1,8 +1,11 @@
 package com.utp.patrocinapp.infrastructure.security;
 
+import com.utp.patrocinapp.domain.service.TokenServicePort;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -10,59 +13,47 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Service
-public class JwtService {
+public class JwtService implements TokenServicePort {
+    private final SecretKey key;
+    private final long expirationMs;
 
-    private static final String SECRET =
-            "PatrocinApp2026JWTSecretKeySuperSegura123456789";
+    public JwtService(@Value("${patrocinapp.jwt.secret}") String secret,
+                      @Value("${patrocinapp.jwt.expiration-ms}") long expirationMs) {
+        if (secret == null || secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException("JWT_SECRET debe contener al menos 32 bytes.");
+        }
+        if (expirationMs <= 0) {
+            throw new IllegalStateException("JWT_EXPIRATION debe ser un número positivo.");
+        }
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expirationMs = expirationMs;
+    }
 
-    private static final SecretKey KEY =
-            Keys.hmacShaKeyFor(
-                    SECRET.getBytes(StandardCharsets.UTF_8));
-
-    private static final long EXPIRATION =
-            1000 * 60 * 60 * 24;
-
-    public String generateToken(String correo) {
-
+    @Override
+    public String generar(String correo) {
+        Date emitido = new Date();
         return Jwts.builder()
                 .subject(correo)
-                .issuedAt(new Date())
-                .expiration(
-                        new Date(
-                                System.currentTimeMillis()
-                                        + EXPIRATION))
-                .signWith(KEY)
+                .issuedAt(emitido)
+                .expiration(new Date(emitido.getTime() + expirationMs))
+                .signWith(key)
                 .compact();
     }
 
     public String extractUsername(String token) {
-
-        Claims claims = Jwts.parser()
-                .verifyWith(KEY)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-
-        return claims.getSubject();
+        return claims(token).getSubject();
     }
 
     public boolean isTokenValid(String token) {
-
         try {
-
-            Jwts.parser()
-                    .verifyWith(KEY)
-                    .build()
-                    .parseSignedClaims(token);
-
-            return true;
-
-        } catch (Exception e) {
-
+            Claims claims = claims(token);
+            return claims.getSubject() != null && claims.getExpiration().after(new Date());
+        } catch (JwtException | IllegalArgumentException ex) {
             return false;
-
         }
-
     }
 
+    private Claims claims(String token) {
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+    }
 }

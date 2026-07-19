@@ -5,6 +5,8 @@ import com.utp.patrocinapp.application.dto.contrato.CrearContratoRequest;
 import com.utp.patrocinapp.application.dto.contrato.CrearContratoResponse;
 import com.utp.patrocinapp.domain.ports.input.CrearContratoInputPort;
 import com.utp.patrocinapp.domain.ports.input.ListarContratosInputPort;
+import com.utp.patrocinapp.domain.ports.input.ConsultarHistorialContratoInputPort;
+import com.utp.patrocinapp.application.dto.contrato.HistorialContratoResponse;
 import com.utp.patrocinapp.shared.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ public class ContratoController {
 
     private final CrearContratoInputPort crearContrato;
     private final ListarContratosInputPort listarContratos;
+    private final ConsultarHistorialContratoInputPort consultarHistorial;
 
     @Operation(summary = "Crear un contrato")
     @ApiResponses({
@@ -80,5 +83,12 @@ public class ContratoController {
                         .data(listarContratos.listarPorDeportista(idDeportista))
                         .build()
         );
+    }
+
+    @Operation(summary = "Consultar historial de evidencias y transacciones del contrato")
+    @GetMapping("/{idContrato}/historial")
+    public ResponseEntity<ApiResponse<HistorialContratoResponse>> historial(@PathVariable Integer idContrato) {
+        return ResponseEntity.ok(ApiResponse.<HistorialContratoResponse>builder().success(true)
+                .message("Historial del contrato obtenido.").data(consultarHistorial.ejecutar(idContrato)).build());
     }
 }

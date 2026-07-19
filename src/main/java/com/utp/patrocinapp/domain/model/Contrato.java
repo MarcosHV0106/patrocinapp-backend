@@ -13,6 +13,7 @@ public class Contrato {
     private BigDecimal montoTotal;
     private EstadoContrato estado;
     private LocalDateTime fechaCreacion;
+    private Long version;
 
     public Contrato() {
     }
@@ -23,7 +24,8 @@ public class Contrato {
             Integer idDeportista,
             BigDecimal montoTotal,
             EstadoContrato estado,
-            LocalDateTime fechaCreacion) {
+            LocalDateTime fechaCreacion,
+            Long version) {
 
         this.idContrato = idContrato;
         this.idNegocio = idNegocio;
@@ -31,6 +33,7 @@ public class Contrato {
         this.montoTotal = montoTotal;
         this.estado = estado;
         this.fechaCreacion = fechaCreacion;
+        this.version = version;
     }
 
     public static Contrato crear(
@@ -43,8 +46,9 @@ public class Contrato {
         contrato.setIdNegocio(idNegocio);
         contrato.setIdDeportista(idDeportista);
         contrato.setMontoTotal(montoTotal);
-        contrato.setEstado(EstadoContrato.PENDIENTE);
+        contrato.setEstado(EstadoContrato.ACTIVO);
         contrato.setFechaCreacion(LocalDateTime.now());
+        contrato.setVersion(null);
 
         return contrato;
     }
@@ -95,6 +99,13 @@ public class Contrato {
 
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public Long getVersion() { return version; }
+    public void setVersion(Long version) { this.version = version; }
+
+    public void finalizar() {
+        this.estado = EstadoContrato.FINALIZADO;
     }
 
 }

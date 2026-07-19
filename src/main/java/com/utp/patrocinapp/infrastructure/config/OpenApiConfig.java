@@ -30,16 +30,16 @@ public class OpenApiConfig {
                                 • DDD
                                 • Arquitectura Hexagonal
                                 • Spring Boot 3.5
-                                • Spring Security 7
+                                • Spring Security administrado por Spring Boot
                                 • JWT
                                 • PostgreSQL
+                                • Evidencias multipart con almacenamiento persistente
                                 """)
 
-                        .version("1.0.0")
+                        .version("2.0.0")
 
                         .contact(new Contact()
-                                .name("Equipo PatrocinApp")
-                                .email("equipo@patrocinapp.com"))
+                                .name("Equipo PatrocinApp"))
 
                         .license(new License()
                                 .name("Uso Académico")))

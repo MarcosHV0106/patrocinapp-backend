@@ -11,7 +11,7 @@ import com.utp.patrocinapp.domain.ports.output.PerfilDeportistaRepositoryPort;
 import com.utp.patrocinapp.domain.ports.output.PerfilNegocioRepositoryPort;
 import com.utp.patrocinapp.domain.ports.output.UsuarioRepositoryPort;
 import com.utp.patrocinapp.domain.service.PasswordEncoderPort;
-import com.utp.patrocinapp.infrastructure.security.JwtService;
+import com.utp.patrocinapp.domain.service.TokenServicePort;
 import com.utp.patrocinapp.shared.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class LoginUseCase implements LoginInputPort {
     private final PerfilNegocioRepositoryPort perfilNegocioRepository;
     private final PerfilDeportistaRepositoryPort perfilDeportistaRepository;
     private final PasswordEncoderPort passwordEncoder;
-    private final JwtService jwtService;
+    private final TokenServicePort tokenService;
 
     @Override
     public LoginResponse ejecutar(LoginRequest request) {
@@ -38,7 +38,7 @@ public class LoginUseCase implements LoginInputPort {
             throw new BusinessException("Correo o contraseña incorrectos.");
         }
 
-        String token = jwtService.generateToken(usuario.getCorreo());
+        String token = tokenService.generar(usuario.getCorreo());
         String nombreMostrar = resolverNombreMostrar(usuario);
 
         return LoginResponse.builder()

@@ -6,4 +6,8 @@ public interface TransaccionRepositoryPort {
 
     Transaccion guardar(Transaccion transaccion);
 
+    boolean existePorMeta(Integer idMetaContrato);
+
+    java.util.List<Transaccion> listarPorContrato(Integer idContrato);
+
 }

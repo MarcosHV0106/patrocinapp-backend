@@ -37,4 +37,8 @@ public class ContratoEntity {
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
 
+    @Version
+    @Column(nullable = false)
+    private Long version;
+
 }

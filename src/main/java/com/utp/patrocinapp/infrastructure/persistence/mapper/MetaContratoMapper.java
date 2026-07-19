@@ -24,7 +24,8 @@ public class MetaContratoMapper {
                 entity.getComentarioDeportista(),
                 entity.getUrlEvidencia(),
                 entity.getEstado(),
-                entity.getFechaActualizacion()
+                entity.getFechaActualizacion(),
+                entity.getVersion()
         );
 
     }
@@ -46,6 +47,7 @@ public class MetaContratoMapper {
                 .urlEvidencia(domain.getUrlEvidencia())
                 .estado(domain.getEstado())
                 .fechaActualizacion(domain.getFechaActualizacion())
+                .version(domain.getVersion())
                 .build();
 
     }

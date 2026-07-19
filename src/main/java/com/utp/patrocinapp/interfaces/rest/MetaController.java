@@ -25,7 +25,8 @@ public class MetaController {
     private final RegistrarEvidenciaInputPort registrarEvidencia;
     private final AprobarMetaInputPort aprobarMeta;
 
-    @Operation(summary = "Registrar evidencia de una meta")
+    @Deprecated
+    @Operation(summary = "Registrar evidencia por URL (legado)", deprecated = true)
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
@@ -49,7 +50,8 @@ public class MetaController {
         );
     }
 
-    @Operation(summary = "Aprobar una meta")
+    @Deprecated
+    @Operation(summary = "Aprobar una meta por su evidencia actual (legado)", deprecated = true)
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",

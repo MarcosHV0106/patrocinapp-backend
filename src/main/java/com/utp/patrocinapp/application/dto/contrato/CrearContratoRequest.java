@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 public class CrearContratoRequest {
 
-    @NotNull
+    @Deprecated
     private Integer idNegocio;
 
     @NotNull
