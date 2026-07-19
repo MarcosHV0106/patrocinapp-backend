@@ -30,7 +30,7 @@ El informe JaCoCo se genera en `target/site/jacoco/index.html`; `verify` exige 8
 
 ## Producción
 
-Usa el perfil `prod`, PostgreSQL persistente, un `JWT_SECRET` aleatorio de al menos 32 bytes y orígenes CORS explícitos. No actives `demo`. Consulta `docs/entrega-final/` antes de preparar Railway o aplicar una migración.
+Usa el perfil `prod`, PostgreSQL persistente, un `JWT_SECRET` aleatorio de al menos 32 bytes y orígenes CORS explícitos. No actives `demo`.
 
 ## Arquitectura y tecnologías
 
@@ -59,9 +59,9 @@ La colección reproducible está en `postman/`; OpenAPI es la referencia complet
 
 La identidad/rol se obtienen del JWT, se comprueba propiedad de recursos y los binarios se validan por tamaño, MIME, firma y SHA-256. La aprobación usa una transacción con locks, unicidad por meta y rollback; impide pago doble y saldo negativo. Ver `SECURITY.md`.
 
-## Docker, Railway y estructura de entrega
+## Docker y Railway
 
-`Dockerfile` es multi-stage y ejecuta como usuario no root; `docker-compose.yml` levanta PostgreSQL/backend con healthchecks. `railway.json` deja el servicio preparado, no desplegado. Los procedimientos, diagramas, pruebas y guiones están en `docs/entrega-final/`.
+`Dockerfile` es multi-stage y ejecuta como usuario no root; `docker-compose.yml` levanta PostgreSQL/backend con healthchecks. `railway.json` deja el servicio preparado, no desplegado.
 
 ## Equipo y licencia
 
